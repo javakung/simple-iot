@@ -3,21 +3,21 @@
 
 int led = 13;
 
-const char* ssid = "";
-const char* password = "";
+const char* ssid = "{{{SSID}}}";
+const char* password = "{{{PASSWORD}}}";
 const char* mqtt_server = "broker.netpie.io";
 const int mqtt_port = 1883;
-const char* mqtt_Client = "";
-const char* mqtt_username = "";
-const char* mqtt_password = "";
+const char* mqtt_client = "{{{Client ID}}}";
+const char* mqtt_username = "{{{Token}}}";
+const char* mqtt_password = "{{{Secret}}}";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
 
 void reconnect() {
   while (!client.connected()) {
-    if (client.connect(mqtt_Client, mqtt_username, mqtt_password)) {
-      client.subscribe("@msg/homecontrol");
+    if (client.connect(mqtt_client, mqtt_username, mqtt_password)) {
+      client.subscribe("@msg/homecontrol");  //subscribe to TOPIC 
     }
     else {
       delay(5000);
@@ -31,6 +31,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
   for (int i = 0; i < length; i++) {
     message = message + (char)payload[i];
   }
+  
+  //Turn on LED if an incoming message is "open", delay for 2s and then turn it off.
   if (message == "open") {
     digitalWrite(led, HIGH);
     delay(2000);
